@@ -1,11 +1,15 @@
 const assert = require ('assert')
 const fs = require ('fs')
 const { Writable } = require ('stream')
-const {DBFReader, DBFHeader} = require ('../')
+const {DBFHeader, DBFReader, DBFWriter} = require ('../')
 const iconv = require ('iconv-lite')
 
 function getInputStream () {
 	return fs.createReadStream ('test/plat2.dbf')
+}
+
+function getOutputStream () {
+	return fs.createWriteStream ('test/generated.dbf')
 }
 
 function test_001_header_check_date (h) {
@@ -62,10 +66,23 @@ async function test_002_read () {
 
 }
 
+async function test_003_write () {
+
+//	let writer = await DBFWriter.from (getInputStream ())
+
+//	writer.pipe (getOutputStream ())	
+	
+//	writer.end ()
+
+	await DBFWriter.copyHeader (getInputStream (), getOutputStream ())
+
+}
+
 async function main () {
 
 	await test_001_header ()
 	await test_002_read ()
+	await test_003_write ()
 
 }
 

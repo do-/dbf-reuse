@@ -1,0 +1,14 @@
+{
+  "name": "dbf-reuse",
+  "version": "0.0.9",
+  "description": "Using old .dbf files as templates for new ones",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "author": "Dmitry Ovsyanko",
+  "license": "MIT",
+  "devDependencies": {
+    "iconv-lite": "^0.6.3"
+  }
+}

@@ -28,9 +28,9 @@ const iconv = require ('iconv-lite') // or whatever iconv you use
 const {DBFReader} = require ('dbf-reuse')
 
 let reader = new DBFReader ({
-//  decoder: b => iconv.decode (b, 'some-antique-dos-encoding'),
-//  deletedFieldName: '_deleted', // if you need deleted records
-//  lowerCaseFieldNames: false    // 0ld $c00l
+//  decoder             : b => iconv.decode (b, 'some-antique-dos-encoding'),
+//  deletedFieldName    : '_deleted',   // if you need deleted records
+//  lowerCaseFieldNames : false         // 0ld $c00l
 })
 
 let src = // ... .dbf file body as binary Readable Stream
@@ -38,4 +38,27 @@ let dst = // ... object mode Writable Stream to store parsed content
 
 src.pipe (reader).pipe (dst)
 
+```
+
+## Writing
+
+Not yet implemented, sorry.
+
+```
+const iconv = require ('iconv-lite') // just copy/pasted it
+const {DBFWriter} = require ('dbf-reuse')
+
+let xmp = // ... sample .dbf file body as binary Readable Stream
+
+let writer = await DBFWriter.from (xmp, {
+//  count               : ...,         // if not set, remains copied from the template
+//  date                : new Date (), // if not set, remains copied from the template
+//  encoder             : s => iconv.encode (s, 'some-antique-dos-encoding'),
+//  lowerCaseFieldNames : false        // 0ld $c00l
+})
+
+let src = // ... object mode Readable Stream with data records to be written out
+let dst = // ...  Writable Stream to save the .dbf file body
+
+src.pipe (writer).pipe (dst)
 ```

@@ -7,24 +7,22 @@ This software development is in alpha stage. Feel free to use it at your own ris
 # Motivation
 Starting this project, the author was developing a node.js based application and needed a library to implement data import/export with a legacy dBASE III+ format. Mostly for generating .dbf files looking just like old ones, but filled with actual data.
 
-He scanned through the npm registry and have found some modules coping with .dbf, but:
+He scanned through the npm registry and have found some modules coping with .dbf (the most advanced of them being [dbffile](https://github.com/yortus/DBFFile)), but:
 * they all required access to file system;
-* none of then provided streaming API;
-* each library was suitable either for reading or writing .dbf, not both;
-* unnecessary dependencies were omnipresent.
+* none of then provided a streaming API.
 
 So he decided to first create from scratch a minimalistic library:
 * doing nothing but converting javaScript objects to .dbf records and vice versa
-  * with node.js streams API
+  * as Transformer streams, for easy piping
 * using existing .dbf files as source for metadata.
 
 # Usage
 
-Here, there are some basic examples. More documentation is at https://github.com/do-/dbf-reuse/wiki.
+Here are some basic examples. More documentation is at https://github.com/do-/dbf-reuse/wiki.
 
 ## Reading
 
-```
+```js
 const iconv = require ('iconv-lite') // or whatever iconv you use
 const {DBFReader} = require ('dbf-reuse')
 
@@ -43,21 +41,35 @@ src.pipe (reader).pipe (dst)
 
 ## Writing
 
+Making an empty template (zero records .dbf) from an existing file:
+```js
+const fs = require ('fs')
+const {DBFWriter} = require ('dbf-reuse')
+
+let is = fs.createReadStream ('big_old_data.dbf')
+let os = fs.createWriteStream ('empty_template.dbf')
+
+await DBFWriter.copyHeader (is, os)
 ```
+Filling it up with data:
+```js
+const fs = require ('fs')
 const iconv = require ('iconv-lite') // just copy/pasted it
 const {DBFWriter} = require ('dbf-reuse')
 
-let xmp = // ... sample .dbf file body as binary Readable Stream
+let template = fs.createReadStream ('empty_template.dbf')
 
-let writer = await DBFWriter.from (xmp, {
-//  count               : ...,         // if not set, remains copied from the template
-//  date                : new Date (), // if not set, remains copied from the template
+let source = getRecordsAsReadableObjectStream ()
+let count  = getRecordCountAsInt ()
+
+let writer = await DBFWriter.from (tmpl, {
+    count,                             // if not set, remains as copied from the template
+//  date                : new Date (), // if not set, remains as copied from the template
 //  encoder             : s => iconv.encode (s, 'some-antique-dos-encoding'),
 //  lowerCaseFieldNames : false        // 0ld $c00l
 })
 
-let src = // ... object mode Readable Stream with data records to be written out
-let dst = // ...  Writable Stream to save the .dbf file body
+let destination = getWritableStreamToStoreIt () 
 
-src.pipe (writer).pipe (dst)
+source.pipe (writer).pipe (destination)
 ```

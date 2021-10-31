@@ -15,7 +15,7 @@ So he decided to first create from scratch a minimalistic library:
 
 # Usage
 
-Here are some basic examples. More documentation is at https://github.com/do-/dbf-reuse/wiki.
+Here are some basic examples. More documentation is available at https://github.com/do-/dbf-reuse/wiki.
 
 ## Reading
 

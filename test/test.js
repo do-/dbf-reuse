@@ -42,6 +42,7 @@ async function getRecords () {
 	let reader = new DBFReader ({
 		decoder: b => iconv.decode (b, 'win1251'),
 		deletedFieldName: '_deleted',
+		nulls: true,
 	})
 
 	return new Promise ((ok, fail) => {
@@ -63,13 +64,8 @@ async function getRecords () {
 
 async function test_002_read () {
 
-	let reader = new DBFReader ({
-		decoder: b => iconv.decode (b, 'win1251'),
-		deletedFieldName: '_deleted',
-	})
-
 	let records = await getRecords ()
-		
+//console.log (records)
 	assert.strictEqual (records.length, 1)	
 	assert.strictEqual (records [0].name_strit, 'Дудикекера')
 	assert.strictEqual (records [0].d_fine, null)
@@ -98,8 +94,8 @@ async function test_003_write () {
 
 async function main () {
 
-//	await test_001_header ()
-//	await test_002_read ()
+	await test_001_header ()
+	await test_002_read ()
 	await test_003_write ()
 
 }

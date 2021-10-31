@@ -1,7 +1,7 @@
 # dbf-reuse
 Using old .dbf files as templates for new ones
 
-# Disclaimer
+# Disclaimerf
 This software development is in alpha stage. Feel free to use it at your own risk.
 
 # Motivation
@@ -23,11 +23,11 @@ Here are some basic examples. More documentation is at https://github.com/do-/db
 ## Reading
 
 ```js
-const iconv = require ('iconv-lite') // or whatever iconv you use
 const {DBFReader} = require ('dbf-reuse')
 
 let reader = new DBFReader ({
-//  decoder             : b => iconv.decode (b, 'some-antique-dos-encoding'),
+//  encoding            : 'some-antique-dos-encoding'
+//  decoder             : b => b,       // why not reading C as raw Buffers?
 //  deletedFieldName    : '_deleted',   // if you need deleted records
 //  lowerCaseFieldNames : false         // 0ld $c00l
 })
@@ -54,7 +54,6 @@ await DBFWriter.copyHeader (is, os)
 Filling it up with data:
 ```js
 const fs = require ('fs')
-const iconv = require ('iconv-lite') // just copy/pasted it
 const {DBFWriter} = require ('dbf-reuse')
 
 let template = fs.createReadStream ('empty_template.dbf')
@@ -65,7 +64,8 @@ let count  = getRecordCountAsInt ()
 let writer = await DBFWriter.from (tmpl, {
     count,                             // if not set, remains as copied from the template
 //  date                : new Date (), // if not set, remains as copied from the template
-//  encoder             : s => iconv.encode (s, 'some-antique-dos-encoding'),
+//  encoding            : 'some-antique-dos-encoding'
+//  encoder             : b => b,      // if you supply encoded Buffers, not Strings
 //  lowerCaseFieldNames : false        // 0ld $c00l
 })
 

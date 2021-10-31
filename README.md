@@ -42,8 +42,6 @@ src.pipe (reader).pipe (dst)
 
 ## Writing
 
-Not yet implemented, sorry.
-
 ```
 const iconv = require ('iconv-lite') // just copy/pasted it
 const {DBFWriter} = require ('dbf-reuse')

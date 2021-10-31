@@ -1,9 +1,6 @@
 # dbf-reuse
 Using old .dbf files as templates for new ones
 
-# Disclaimerf
-This software development is in alpha stage. Feel free to use it at your own risk.
-
 # Motivation
 Starting this project, the author was developing a node.js based application and needed a library to implement data import/export with a legacy dBASE III+ format. Mostly for generating .dbf files looking just like old ones, but filled with actual data.
 

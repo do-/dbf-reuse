@@ -1,6 +1,6 @@
 const assert = require ('assert')
 const fs = require ('fs')
-const { Writable } = require ('stream')
+const { Readable, Writable } = require ('stream')
 const {DBFHeader, DBFReader, DBFWriter} = require ('../')
 const iconv = require ('iconv-lite')
 
@@ -37,14 +37,14 @@ async function test_001_header () {
 
 }
 
-async function test_002_read () {
+async function getRecords () {
 
 	let reader = new DBFReader ({
 		decoder: b => iconv.decode (b, 'win1251'),
 		deletedFieldName: '_deleted',
 	})
 
-	let records = await new Promise ((ok, fail) => {
+	return new Promise ((ok, fail) => {
 
 		let records = [], is = getInputStream (), collector = new Writable  ({
 			objectMode: true,
@@ -58,9 +58,19 @@ async function test_002_read () {
 		is.pipe (reader).pipe (collector)
 
 	})
-	
-	assert.strictEqual (records.length, 1, 'Body: # of records')
-	
+
+}
+
+async function test_002_read () {
+
+	let reader = new DBFReader ({
+		decoder: b => iconv.decode (b, 'win1251'),
+		deletedFieldName: '_deleted',
+	})
+
+	let records = await getRecords ()
+		
+	assert.strictEqual (records.length, 1)	
 	assert.strictEqual (records [0].name_strit, 'Дудикекера')
 	assert.strictEqual (records [0].d_fine, null)
 
@@ -68,20 +78,28 @@ async function test_002_read () {
 
 async function test_003_write () {
 
-//	let writer = await DBFWriter.from (getInputStream ())
+	let records = await getRecords ()
 
+	let writer = await DBFWriter.from (getInputStream (), {
+		encoder: s => iconv.encode (s, 'windows-1251'),
+	})
+
+	Readable.from (records).pipe (writer).pipe (getOutputStream ())	
+	
 //	writer.pipe (getOutputStream ())	
 	
-//	writer.end ()
-
-	await DBFWriter.copyHeader (getInputStream (), getOutputStream ())
+//	for (let record of records) writer.write (record)
+	
+///	writer.end ()
+	
+//	await DBFWriter.copyHeader (getInputStream (), getOutputStream ())
 
 }
 
 async function main () {
 
-	await test_001_header ()
-	await test_002_read ()
+//	await test_001_header ()
+//	await test_002_read ()
 	await test_003_write ()
 
 }

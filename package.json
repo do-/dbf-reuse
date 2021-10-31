@@ -1,5 +1,9 @@
 {
   "name": "dbf-reuse",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/do-/dbf-reuse.git"
+  },
   "version": "0.0.9",
   "description": "Using old .dbf files as templates for new ones",
   "main": "index.js",
@@ -8,7 +12,7 @@
   },
   "author": "Dmitry Ovsyanko",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "iconv-lite": "^0.6.3"
   }
 }

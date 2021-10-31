@@ -6,7 +6,6 @@ const crypto = require ('crypto')
 
 const SRC_FILE_NAME = 'test/plat2.dbf'
 const DST_FILE_NAME = 'test/generated.dbf'
-const encoding = 'windows-1251'
 
 function getInputStream () {
 	return fs.createReadStream (SRC_FILE_NAME)
@@ -57,7 +56,6 @@ async function test_001_header () {
 async function getRecords () {
 
 	let reader = new DBFReader ({
-		encoding,
 		deletedFieldName: '_deleted',
 		nulls: true,
 	})
@@ -93,7 +91,7 @@ async function test_003_write () {
 
 	let records = await getRecords ()
 
-	let writer = await DBFWriter.from (getInputStream (), {encoding})
+	let writer = await DBFWriter.from (getInputStream (), {})
 
 	Readable.from (records).pipe (writer).pipe (getOutputStream ())	
 	

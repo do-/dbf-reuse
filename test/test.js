@@ -84,6 +84,7 @@ async function test_002_read () {
 	assert.strictEqual (records.length, 1)	
 	assert.strictEqual (records [0].name_strit, 'Дудикекера')
 	assert.strictEqual (records [0].d_fine, null)
+	assert.strictEqual (records [0].pdate, '2015-08-26')
 
 }
 

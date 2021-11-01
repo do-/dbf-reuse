@@ -89,12 +89,28 @@ async function test_002_read () {
 
 async function test_003_write () {
 
-	let records = await getRecords ()
+	let records = await getRecords (), src = Readable.from (records)
 
-	let writer = await DBFWriter.from (getInputStream (), {})
-
-	Readable.from (records).pipe (writer).pipe (getOutputStream ())	
+	let dbf = await DBFWriter.from (getInputStream (), {count: records.length})
 	
+	let size_plan = dbf.getFileSize ()
+		
+	let dst = getOutputStream ()
+	
+	await new Promise ((ok, fail) => {
+	
+		for (let i of [src, dbf, dst]) i.on ('error', fail)
+		
+		dst.on ('close', ok)
+
+		src.pipe (dbf).pipe (dst)	
+
+	})
+	
+	let size_fact = fs.statSync (DST_FILE_NAME).size
+
+	assert.strictEqual (size_plan, size_fact)
+
 	let [checksum_src, checksum_dst] = await Promise.all ([SRC_FILE_NAME, DST_FILE_NAME].map (checksum))
 	
 	assert.strictEqual (checksum_src, checksum_dst)

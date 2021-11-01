@@ -13,6 +13,12 @@ So he decided to first create from scratch a minimalistic library:
   * as Transformer streams, for easy piping
 * using existing .dbf files as source for metadata.
 
+# Installation
+
+```shell
+npm install dbf-reuse
+```
+
 # Usage
 
 Here are some basic examples. More documentation is available at https://github.com/do-/dbf-reuse/wiki.

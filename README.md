@@ -56,7 +56,8 @@ await DBFWriter.copyHeader (is, os)
 ```
 Filling it up with data:
 ```js
-const fs = require ('fs')
+const fs          = require ('fs')
+const zlib        = require ('zlib')
 const {DBFWriter} = require ('dbf-reuse')
 
 let template = fs.createReadStream ('empty_template.dbf')
@@ -65,14 +66,23 @@ let source = getRecordsAsReadableObjectStream ()
 let count  = getRecordCountAsInt ()
 
 let writer = await DBFWriter.from (tmpl, {
+//  encoding            : 'some-antique-dos-encoding',
     count,                             // if not set, remains as copied from the template
 //  date                : new Date (), // if not set, remains as copied from the template
-//  encoding            : 'some-antique-dos-encoding'
-//  encoder             : b => b,      // if you supply encoded Buffers, not Strings
+//  encoder             : b => b,      // if you supply properly encoded Buffers, not strings, for `C`
 //  lowerCaseFieldNames : false        // 0ld $c00l
+})
+
+somehowReportNewFileMetadata ({
+  name: 'DATA.DBF',
+  size: writer.getFileSize (),         // calculates UNcompressed size
+  //... MIME type and so on
 })
 
 let destination = getWritableStreamToStoreIt () 
 
-source.pipe (writer).pipe (destination)
+source
+  .pipe (writer)
+  .pipe (zlib.createGzip ())           // think Content-Encoding: gzip
+  .pipe (destination)
 ```

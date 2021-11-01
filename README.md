@@ -32,7 +32,7 @@ let reader = new DBFReader ({
 //  encoding            : 'some-antique-dos-encoding'
 //  decoder             : b => b,       // why not reading C as raw Buffers?
 //  deletedFieldName    : '_deleted',   // if you need deleted records
-//  lowerCaseFieldNames : false         // 0ld $c00l
+//  lowerCaseFieldNames : false         // 0LD $CHOOL
 })
 
 let src = // ... .dbf file body as binary Readable Stream
@@ -70,7 +70,7 @@ let writer = await DBFWriter.from (tmpl, {
     count,                             // if not set, remains as copied from the template
 //  date                : new Date (), // if not set, remains as copied from the template
 //  encoder             : b => b,      // if you supply properly encoded Buffers, not strings, for `C`
-//  lowerCaseFieldNames : false        // 0ld $c00l
+//  lowerCaseFieldNames : false        // 0LD $CHOOL
 })
 
 somehowReportNewFileMetadata ({

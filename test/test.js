@@ -7,6 +7,47 @@ const crypto = require ('crypto')
 const SRC_FILE_NAME = 'test/plat2.dbf'
 const DST_FILE_NAME = 'test/generated.dbf'
 
+const RECORD = {
+  code_firme: '11111',
+  rc: '5555555.555',
+  mfo: '555555',
+  mfo_ot: '555555',
+  code_plat: '55',
+  number: '1',
+  c_fil: '5555',
+  c_com: '5',
+  n_sf: '0',
+  nop: '55',
+  abcount: '5555/55',
+  pdate: '2015-08-26',
+  ptime: '15:51:38',
+  date_ob: '2015-08-26',
+  n_plat: '555555',
+  dateb: '2015-06-01',
+  datee: '2015-08-31',
+  summ: '55.00',
+  summccy: 'UAH',
+  orsumm: '55.00',
+  orsummccy: 'RUB',
+  summ_p: '0.00',
+  countb: '0',
+  counte: '0',
+  countd: '0',
+  fio: 'Иванов Е',
+  code_c: '55',
+  code_s: '55',
+  name_strit: 'Дудикекера',
+  n_house: '5',
+  f_house: '0',
+  a_house: null,
+  d_house: '0',
+  n_room: '55',
+  a_room: null,
+  code_erc: null,
+  n_fine: null,
+  d_fine: null
+}
+
 function getInputStream () {
 	return fs.createReadStream (SRC_FILE_NAME)
 }
@@ -81,18 +122,18 @@ async function test_002_read () {
 
 	let records = await getRecords ()
 
-	assert.strictEqual (records.length, 1)	
-	assert.strictEqual (records [0].name_strit, 'Дудикекера')
-	assert.strictEqual (records [0].d_fine, null)
-	assert.strictEqual (records [0].pdate, '2015-08-26')
+	assert.strictEqual (records.length, 1)		
+	assert.deepStrictEqual (records [0], RECORD)
 
 }
 
-async function test_003_write () {
+async function test_003_write (patch) {
 
-	let records = await getRecords (), src = Readable.from (records)
+	let r = {...RECORD}; if (patch) patch (r)
+console.log (r)
+	let arr = [RECORD], src = Readable.from (arr)
 
-	let dbf = await DBFWriter.from (getInputStream (), {count: records.length})
+	let dbf = await DBFWriter.from (getInputStream (), {count: arr.length})
 	
 	let size_plan = dbf.getFileSize ()
 		
@@ -123,6 +164,11 @@ async function main () {
 	await test_001_header ()
 	await test_002_read ()
 	await test_003_write ()
+	await test_003_write (r => r.code_firme = parseInt (r.code_firme))
+	await test_003_write (r => r.summ = parseFloat (r.summ))
+	await test_003_write (r => r.rc = parseFloat (r.rc))
+	await test_003_write (r => r.pdate = new Date (r.pdate))
+	await test_003_write (r => r.pdate = Date.parse (r.pdate))
 
 }
 

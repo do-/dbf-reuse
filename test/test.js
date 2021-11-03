@@ -130,8 +130,8 @@ async function test_002_read () {
 async function test_003_write (patch) {
 
 	let r = {...RECORD}; if (patch) patch (r)
-console.log (r)
-	let arr = [RECORD], src = Readable.from (arr)
+
+	let arr = [r], src = Readable.from (arr)
 
 	let dbf = await DBFWriter.from (getInputStream (), {count: arr.length})
 	
@@ -167,6 +167,7 @@ async function main () {
 	await test_003_write (r => r.code_firme = parseInt (r.code_firme))
 	await test_003_write (r => r.summ = parseFloat (r.summ))
 	await test_003_write (r => r.rc = parseFloat (r.rc))
+	await test_003_write (r => r.orsumm = parseInt (r.orsumm))
 	await test_003_write (r => r.pdate = new Date (r.pdate))
 	await test_003_write (r => r.pdate = Date.parse (r.pdate))
 
